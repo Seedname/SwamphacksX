@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import bodyParser  from "body-parser"
 import dotenv from "dotenv";
-
+ 
 function setup() {
     dotenv.config();
 
@@ -27,9 +27,16 @@ function setup() {
     app.use(cookieParser());
 
     app.use(express.static(path.join(__dirname, '../firewatch/dist')));
+
+    // app.use('/api', auth, (req, res, next) => {
+    //     next();
+    // });
+
+
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '../firewatch/dist', 'index.html'));
     });
+    
     
     app.listen(port, ()=> {
         console.log(`Server Started on http://localhost:${port}`);

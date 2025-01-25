@@ -1,6 +1,7 @@
 //import { GalleryVerticalEnd } from "lucide-react"
 
-import { LoginForm } from "./login-form"
+// import { LoginForm } from "./login-form"
+import { useAuth0 } from "@auth0/auth0-react";
 
 // export default function Login() {
 //   return (
@@ -18,6 +19,12 @@ import { LoginForm } from "./login-form"
 //   )
 // }
 
-export default function Login() {
-  return LoginForm;
+export const DOMAIN = 'dev-qqmcm7oc7pbvgr83.us.auth0.com';
+export const CLIENT_ID = 's66NIrhZLocictYcNrvD0HLUe4pPDhgM';
+
+const Login = () => {
+    const { user, logout, loginWithRedirect, isAuthenticated } = useAuth0();
+    loginWithRedirect();
 }
+
+export default Login;

@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Home.module.css'; // Assuming you'll add some custom styles for this page
+import LoginButton from '../../components/loginbutton';
 
 const Home = () => {
   return (
@@ -19,17 +20,21 @@ const Home = () => {
 
       <section className={styles.home_actions}>
         <button className={styles.cta_button} onClick={() => {
-          
+          window.location.href = '/dashboard';
         }}>
           Dashboard
         </button>
+        {/* <button className={styles.cta_button} onClick={()=>{
+          window.location.href = '/login';
+        }}>Login</button> */}
+        <LoginButton className={styles.cta_button}></LoginButton>
         <button className={styles.cta_button} onClick={() => alert('Learn more about wildfires...')}>
           Learn More
         </button>
       </section>
 
       <footer className={styles.home_footer}>
-        <p>&copy; 2025 Wildfire Prediction. All rights reserved.</p>
+        <p>&copy; 2025 Wildfire Prediction. All rights reserved. Made by the Dream Team</p>
       </footer>
     </div>
   );

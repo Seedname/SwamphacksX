@@ -42,7 +42,7 @@ body {
   background-color: #f4f4f4;
   margin: 0;
   padding: 0;
-}
+  }
 
 .app_container {
   text-align: center;
@@ -113,4 +113,87 @@ body {
   width: 100px;
   height: 100vh;
 }
+
+.nav {
+  position : relative;
+  top : 5px;
+  margin-top: 10px;
+  margin-bottom : 20px;
+  width : 98%;
+  background-color: #ff6347;;
+  overflow: hidden;
+  display: inline-flex;
+  justify-content: space-between;
+  height: 10vh;
+  align-items: center;
+  border-radius: 20px;
+  border: 2px solid black;
+}
+
+
+.nav_links {
+  width : 50%;
+  position: relative;
+  margin: 10px;
+  padding: 10px;
+  left : 10px;
+  border: 1px solid red; /* Corrected the border declaration */
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  justify-content: space-between; /* This spreads the children evenly */
+}
+
+
+.nav_links_buttons {
+  width: 20%;
+  height: 50%;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav_links_buttons a{
+  padding : 10px;
+  margin : 2px;
+  text-decoration: none; /* Removes underline */
+  color: black; 
+  border-radius: 2px;/* Sets the text color - adjust as needed */
+  display: block; /* Makes link use full space of the container */
+  width: 100%; /* Ensures it fills the button for consistent click area */
+}
+
+.nav_login{
+  width: 20%;
+  height : 50%;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav_login a{
+  padding : 10px;
+  margin : 2px;
+  text-decoration: none; /* Removes underline */
+  color: black; 
+  border-radius: 2px;/* Sets the text color - adjust as needed */
+  display: block; /* Makes link use full space of the container */
+  width: 100%; /* Ensures it fills the button for consistent click area */
+}
+
+.map_wrapper{
+  position: relative;
+  top : 20px;
+  width: 600px;       /* Adjust the width as per your requirement */
+  height: 400px;      /* Adjust the height as per your requirement */
+  border: 2px solid black; /* Add a border around the map */
+  padding: 0;         /* Make sure no padding is added */
+}
+
+
+
+
 
