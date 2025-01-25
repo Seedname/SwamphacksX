@@ -1,0 +1,53 @@
+/* Home.css */
+.home_container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  .home_header {
+    background-color: #ff6347; /* Warm red color, representing wildfire */
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+  }
+  
+  .home_header h1 {
+    font-size: 3rem;
+    margin: 0;
+  }
+  
+  .home_header p {
+    font-size: 1.2rem;
+  }
+  
+  .home_description {
+    margin: 20px;
+    font-size: 1.1rem;
+  }
+  
+  .home_actions {
+    margin-top: 30px;
+  }
+  
+  .cta_button {
+    background-color: #ff6347;
+    color: white;
+    font-size: 1.1rem;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .cta_button:hover {
+    background-color: #ff4500;
+  }
+  
+  .home_footer {
+    margin-top: 50px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
