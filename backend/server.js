@@ -5,12 +5,17 @@ import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import bodyParser  from "body-parser"
 import dotenv from "dotenv";
+
+import http from "http";
+import https from "https";
  
 function setup() {
     dotenv.config();
 
+    const dev = process.env.NODE_ENV !== 'production';
+
     const app = express();
-    const port = 80;
+    let port = dev ? 80 : 443;
 
     app.use(cors({
         origin: true,
@@ -37,10 +42,13 @@ function setup() {
         res.sendFile(path.join(__dirname, '../firewatch/dist', 'index.html'));
     });
     
-    
-    app.listen(port, ()=> {
-        console.log(`Server Started on http://localhost:${port}`);
-    });
+    http.createServer(app).listen(80);
+
+    if (!dev) {
+        var privateKey  = fs.readFileSync('/etc/letsencrypt/live/firewatch.wiki/privkey.pem', 'utf8');
+        var certificate = fs.readFileSync('/etc/letsencrypt/live/firewatch.wiki/fullchain.pem', 'utf8')
+        https.createServer(credentials, app).listen(443);
+    }
 }
 
 setup();

@@ -45,8 +45,14 @@ body {
   }
 
 .app_container {
+  width:100%;
+  min-height: 100vh;
+  padding: 5%;
+  background-image: linear-gradient(rgba(0,8,51,0.9),rgba(0,8,51,0.9)), url("./background_image.jpg");
   text-align: center;
-  padding: 50px;
+  background-position: center;
+  background-size: cover;
+
 }
 
 .title {
@@ -146,7 +152,7 @@ body {
 }
 
 
-.nav_links_buttons {
+.nav_links_buttons{
   width: 20%;
   height: 50%;
   border: 1px solid black;
@@ -159,7 +165,8 @@ body {
   padding : 10px;
   margin : 2px;
   text-decoration: none; /* Removes underline */
-  color: black; 
+  color: white;
+
   border-radius: 2px;/* Sets the text color - adjust as needed */
   display: block; /* Makes link use full space of the container */
   width: 100%; /* Ensures it fills the button for consistent click area */
@@ -174,7 +181,7 @@ body {
   align-items: center;
 }
 
-.nav_login a{
+.nav_login_button{
   padding : 10px;
   margin : 2px;
   text-decoration: none; /* Removes underline */

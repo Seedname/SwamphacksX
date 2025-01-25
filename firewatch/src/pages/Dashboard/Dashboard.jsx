@@ -49,8 +49,19 @@ function Dashboard() {
             </div>
         </div>
         
-        <div  className = {styles.nav_login}>
-          <LoginButton></LoginButton>
+        {/* <div  className = {styles.nav_login}>
+          <a href = "#">Login</a>
+        </div> */}
+        <div className={styles.nav_login} onClick={()=>{
+          const { user, loginWithRedirect, isAuthenticated, logOut } = useAuth0();
+          if (isAuthenticated) {
+            logOut();
+          }
+          else {
+            loginWithRedirect();
+          }
+        }}>
+          Login
         </div>
       </div>
 
