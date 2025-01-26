@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home/Home';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Reports from './pages/Reports/Reports'
-import Login, { DOMAIN, CLIENT_ID } from './pages/Login/Login';
+import Login, { DOMAIN, CLIENT_ID } from "./pages/Login/Login";
 import { Auth0Provider } from '@auth0/auth0-react'
 //import LoginForm from './pages/Login/login-form'
 // import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute
@@ -15,7 +15,7 @@ const App = () => {
       domain={DOMAIN}
       clientId={CLIENT_ID}
       authorizationParams={{ redirect_uri: window.location.origin }}
-      redirect_uri = {window.location.origin}
+      // redirect_uri = {window.location.origin}
     >
     <div>
         <Routes>

@@ -217,6 +217,24 @@ body {
   background-color: blue;
 }
 
+.cta_button {
+  padding: 0.8vh 2vw;
+  border: none;
+  border-radius: 0.5vw;
+  background-color: #ff6347; /* Tomato background color */
+  color: white;
+  font-size: 1.3vw;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none; /* Remove underline from Anchor component */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+}
 
+.cta_button:hover {
+  background-color: #ff4500; /* Darker shade for hover effect */
+}
 
 

@@ -181,6 +181,8 @@ export default Report;*/
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Reports.module.css';
+import { Container, Group, Title, Paper, TextInput, List, Anchor, AppShell, Grid, Image } from '@mantine/core';
+
 
 const Report = () => {
   const [formData, setFormData] = useState({
@@ -201,6 +203,23 @@ const Report = () => {
     console.log('Form submitted:', formData);
     alert('Report submitted successfully!');
     setFormData({ name: '', location: '', description: '' });
+    try {
+      const response = await fetch('/api/incidents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        alert('Report submitted successfully!');
+        setFormData({ name: '', location: '', description: '' });
+      } else {
+        alert('Failed to submit report.');
+      }
+    } catch (error) {
+      alert('An error occurred');
+    }
 
     // Uncomment and update the following lines to send data to the server
     // const response = await fetch('http://localhost:5000/api/reports', {
@@ -224,7 +243,7 @@ const Report = () => {
     
 
     <div className={styles.container}>
-      
+      <div className={styles.background_image}></div>
       <h1 className={styles.heading}>Submit Wildfire Report</h1>
       <h2 className={styles.subheading}>If you want to report a wildfire-related incident, please report it here!</h2>
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -273,6 +292,8 @@ const Report = () => {
           <button type="button" className={styles.button} style={{
               marginRight: "10px"
           }}><Link to="/">Back to Home</Link></button>
+
+          {/* <Anchor component={Link} to="/dashboard" c="white" underline="hover" >Dashboard</Anchor> */}
           <button type="submit" className={styles.button} style={{
               marginLeft: "10px"
           }}>Submit Report</button>

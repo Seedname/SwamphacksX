@@ -2,15 +2,31 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
-  background-image: url('/firewatch.avif'); /* Set background image */
+  /* background-image: url('/firewatch.avif'); 
   background-size: cover;
   background-position: center;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  width: 100vw;
+  width: 100vw; */
+  /* filter: blur(5px); */
 }
+
+
+.background_image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  display: block;
+  background: url('/firewatch.avif');
+  width: 100vw;
+  height: 100vh;
+  filter: blur(1px);
+  background-size: cover;
+}
+
 
 .home_container {
   width: 100%;
@@ -27,13 +43,14 @@ body {
   background-color: #ff6347; /* Tomato background color */
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between; /* Space between title and login button */
   color: white;
   font-size: 2.5vw;
   font-weight: bold;
   position: fixed;
   top: 0;
   left: 0;
+  padding: 0 2vw; /* Add padding to the sides */
 }
 
 .navbar_title {
@@ -41,18 +58,14 @@ body {
   align-items: center;
 }
 
-.logo_container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: white; /* White background for contrast */
-  border-radius: 50%; /* Circular background */
-  padding: 1vw; /* Padding to create circular effect */
+.navbar_logo {
   margin: 0 1vw; /* Margin to separate the words "Fire" and "Watch" */
+  max-height: 8vh; /* Larger image */
 }
 
-.navbar_logo {
-  max-height: 8vh; /* Larger image */
+.navbar_login {
+  display: flex;
+  align-items: center;
 }
 
 .content {

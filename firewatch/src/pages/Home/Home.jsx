@@ -5,14 +5,17 @@ import LoginButton from '../../components/loginbutton';
 const Home = () => {
   return (
     <div className={styles.home_container}>
+      <div className={styles.background_image}></div>
+      
       <header className={styles.navbar}>
         <h1 className={styles.navbar_title}>
-          Fire
-          <div className={styles.logo_container}>
-            <img src="/firelogo.png" alt="Firewatch Logo" className={styles.navbar_logo} />
-          </div>
-          Watch
+          Firewatch
         </h1>
+        <div className={styles.navbar_login}>
+          <button className={styles.cta_button} onClick={()=>{window.location.href = '/login'}}>
+            Login
+          </button>
+        </div>
       </header>
 
       <div className={styles.content}>
@@ -35,7 +38,6 @@ const Home = () => {
             }}>
               Dashboard
             </button>
-            <LoginButton className={styles.cta_button} />
             <button className={styles.cta_button} onClick={() => alert('Learn more about wildfires...')}>
               Learn More
             </button>

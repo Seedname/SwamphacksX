@@ -1,15 +1,34 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
+import L from 'leaflet';
 import { Container, Group, Title, Paper, TextInput, List, Anchor, AppShell, Grid, Image } from '@mantine/core';
 import styles from './Dashboard.module.css';
 import { useAuth0 } from "@auth0/auth0-react";
 let loggedIn = false;
 
+function MapController({ onMapReady }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (map) {
+      onMapReady(map);
+    }
+  }, [map, onMapReady]);
+
+  return null;
+}
+
 function Dashboard() {
   const [csvData, setCsvData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCities, setFilteredCities] = useState([]);
+  const [map, setMap] = useState(null);
+
+  const handleMapReady = useCallback((mapInstance) => {
+    setMap(mapInstance);
+  }, []);
+  
   const debounceTimeout = useRef(null);
   
   useEffect(() => {
@@ -20,7 +39,11 @@ function Dashboard() {
         const rows = csvText.split("\n").slice(1);
         const data = rows.map(row => {
           const [city, city_ascii, lat, lng, country] = row.split(",");
-          return { city, city_ascii, lat, lng, country };
+          return { city: String(city).replace(/['"]+/g, ''), 
+            city_ascii: String(city_ascii).replace(/['"]+/g, ''), 
+            lat: String(lat).replace(/['"]+/g, ''), 
+            lng: String(lng).replace(/['"]+/g, ''), 
+            country: String(country).replace(/['"]+/g, '') };
         });
         setCsvData(data);
       } catch (error) {
@@ -70,10 +93,16 @@ function Dashboard() {
     return <Anchor component={Link} to="/login" c="white" underline="hover" >Login</Anchor>;
   };
 
-  const handleCitySelect = async (latitude, longitude) => {
+  const handleCitySelect = async (city) => {
     setSearchQuery("");
     setFilteredCities([]);
 
+    let latitude = parseFloat(city.lat);
+    let longitude = parseFloat(city.lng);
+    let pos = L.latLng(latitude, longitude);
+    map.setView(pos, 10);
+
+    console.log(pos)
     try {
       await fetch("/api/fire", {
         method: "POST",
@@ -99,7 +128,7 @@ function Dashboard() {
       >
         <Group justify="space-between">
           <Group>
-            <Title order={2} c="white" style={{ display: 'flex', alignItems: 'center' }}>
+            <Title order={2} c="white" style={{ display: 'flex', alignItems: 'center', marginLeft: '1vw'}}>
               Firewatch
               <img src="/firelogo.png" style={{
                 marginLeft: '10px',
@@ -107,14 +136,14 @@ function Dashboard() {
               }}/>
             </Title>
           </Group>
-          <Group>
-            <Anchor component={Link} to="/" c="white" underline="hover" >Home</Anchor>
-            <Anchor component={Link} to="/reports" c="white" underline="hover" >Submit Report</Anchor>
-            {/* <Anchor component={Link} to="/login" c="white" underline="hover" >Login</Anchor> */}
-            {/* <LoginButton></LoginButton> */}
+          <Group className={styles.nav_buttons}>
+            <Anchor component={Link} to="/" className={styles.cta_button}>Home</Anchor>
+            <Anchor component={Link} to="/reports" className={styles.cta_button}>Submit Report</Anchor>
+            <Anchor component={Link} to="/" className={styles.cta_button}>Login</Anchor>
           </Group>
         </Group>
       </AppShell.Header>
+  
   
       <Paper 
         style={{ 
@@ -173,6 +202,7 @@ function Dashboard() {
           scrollWheelZoom={true}
           style={{ height: "100%", width: "100%" }}
         >
+          <MapController onMapReady={handleMapReady} />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

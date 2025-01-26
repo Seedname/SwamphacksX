@@ -19,12 +19,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 //   )
 // }
 
-export const DOMAIN = 'dev-qqmcm7oc7pbvgr83.us.auth0.com';
-export const CLIENT_ID = 's66NIrhZLocictYcNrvD0HLUe4pPDhgM';
+export const DOMAIN = "dev-qqmcm7oc7pbvgr83.us.auth0.com"
+export const CLIENT_ID = "7ZVne8Lf3m2wCQ88TopfFeJATRJYAXhm"
 
 const Login = () => {
-    const { loginWithRedirect } = useAuth0();
-    loginWithRedirect();
+    const { isAuthenticated, loginWithRedirect } = useAuth0();
+    if (!isAuthenticated) {
+        loginWithRedirect();
+    }
 }
 
 export default Login;
