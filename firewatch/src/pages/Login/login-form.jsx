@@ -106,3 +106,5 @@ const LoginForm = ({className}) => {
     )
   )
 };
+
+export default LoginForm;

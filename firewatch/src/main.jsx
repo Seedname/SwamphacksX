@@ -5,6 +5,8 @@ import '@mantine/core/styles.css';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 
+// import  from './pages/Login/Login.jsx';
+
 const theme = {
   primaryColor: 'red',
   colors: {
@@ -40,6 +42,7 @@ const theme = {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+
     <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
       <BrowserRouter>
         <App />

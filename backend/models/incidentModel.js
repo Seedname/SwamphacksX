@@ -1,14 +1,11 @@
 import mongoose from "mongoose";
 
 const incidentSchema = new mongoose.Schema({
-  type: { type: String, required: true },
+  name: { type: String, required: true },
   description: { type: String, required: true },
-  location: {
-    lat: { type: Number, required: true },
-    lng: { type: Number, required: true }
-  },
+  location: { type: String, required: true },
   date: { type: Date, default: Date.now }
 });
 
-const Incident = mongoose.model('Incident', incidentSchema);
+const Incident = mongoose.model('Incident', incidentSchema, 'incident-reports');
 export default Incident;

@@ -11,17 +11,9 @@ import https from "https";
 import mongoose from 'mongoose';
 import router from './routes/routes.js';
 
-let db;
-let reports;
-
-async function connectToMongoDB(client){
-  try{
-      await client.connect();
-      db = client.db('firewatch')
-      reports = db.collection('incident-reports');
-  } catch (error){
-      console.error('Failed to connect to database', error);
-  }
+const connectDB = async () => {
+    await mongoose.connect(process.env.MONGO_URI)
+    .then(()=>console.log("Database Connected"));
 }
 
 async function setup() {
@@ -59,7 +51,7 @@ async function setup() {
     //     }
     // });
 
-    // await connectToMongoDB(client);
+    await connectDB();
 
     app.use('/api', router);
 
@@ -75,8 +67,6 @@ async function setup() {
         let credentials = {key: privateKey, cert: certificate};
         https.createServer(credentials, app).listen(443);
     }
-
-    // app.use('/incidentreports', incidentRoutes);
 
 }
 

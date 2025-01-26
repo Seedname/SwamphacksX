@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, Marker, Popup, Circle } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
-import { Container, Group, Title, Paper, TextInput, List, Anchor, AppShell, Grid, Image } from '@mantine/core';
+import { Container, Select, Checkbox, Group, Paper, TextInput, List, Anchor, AppShell, Grid, Image, Title } from '@mantine/core';
 import styles from './Dashboard.module.css';
 import { useAuth0 } from "@auth0/auth0-react";
-let loggedIn = false;
-
+import fireIcon from './FireIcon.svg'
+import waterIcon from './WaterIcon.svg'
 function MapController({ onMapReady }) {
   const map = useMap();
   
@@ -24,6 +24,30 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCities, setFilteredCities] = useState([]);
   const [map, setMap] = useState(null);
+  const [incidents, setIncidents] = useState([]);
+  const [viewIncidentList, setViewIncidentList] = useState(false);
+  const [fireLocations, setFireLocations] = useState([]);
+  const [waterLocations, setWaterLocations] = useState([]);
+
+  const [circleCenter, setCircleCenter] = useState([0, 0]);
+  const [circleRadius, setCircleRadius] = useState(50);
+  const [showCircle, setShowCircle] = useState(false);
+
+  const fireMarker = new L.Icon({
+    iconUrl: fireIcon,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16],
+  });
+
+  const waterMarker = new L.Icon({
+    iconUrl: waterIcon,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16],
+  });
+
+  
 
   const handleMapReady = useCallback((mapInstance) => {
     setMap(mapInstance);
@@ -38,12 +62,12 @@ function Dashboard() {
         const csvText = await response.text();
         const rows = csvText.split("\n").slice(1);
         const data = rows.map(row => {
-          const [city, city_ascii, lat, lng, country] = row.split(",");
-          return { city: String(city).replace(/['"]+/g, ''), 
-            city_ascii: String(city_ascii).replace(/['"]+/g, ''), 
-            lat: String(lat).replace(/['"]+/g, ''), 
-            lng: String(lng).replace(/['"]+/g, ''), 
-            country: String(country).replace(/['"]+/g, '') };
+        const [city, city_ascii, lat, lng, country] = row.split(",");
+        return { city: String(city).replace(/['"]+/g, ''), 
+          city_ascii: String(city_ascii).replace(/['"]+/g, ''), 
+          lat: String(lat).replace(/['"]+/g, ''), 
+          lng: String(lng).replace(/['"]+/g, ''), 
+          country: String(country).replace(/['"]+/g, '') };
         });
         setCsvData(data);
       } catch (error) {
@@ -53,6 +77,24 @@ function Dashboard() {
 
     fetchCSV();
   }, []);
+
+  useEffect(async () => {
+    // const fetchIncidents = async () => {
+    //   try {
+    //     const response = await fetch('/api/get-incidents');
+    //     const data = await response.json();
+    //     console.log(data)
+    //   } catch (error) {
+    //     console.error('Error fetching incidents:', error);
+    //   }
+    // };
+    const response = await fetch("/api/get-incidents", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    });    
+    const data = await response.json();
+    setIncidents(data)
+  }, []);  
 
   const handleSearch = useCallback((query) => {
     if (debounceTimeout.current) {
@@ -72,7 +114,6 @@ function Dashboard() {
             break;
           }
         }
-        // console.log(matches);
       }
       setFilteredCities(matches);
     }, 300);
@@ -83,15 +124,41 @@ function Dashboard() {
     setSearchQuery(query);
     handleSearch(query);
   };
+  
+  const incidentOptions = incidents.map((incident) => ({
+    value: incident._id,
+    label: `${incident.name} - ${incident.location}`,
+  }));
 
-  const LoginButton = () => {
-    const { isAuthenticated } = useAuth0();
-    console.log(isAuthenticated)
-    if (isAuthenticated) {
-      return <Anchor component={Link} to="/logout" c="white" underline="hover" >Logout</Anchor>;
-    }
-    return <Anchor component={Link} to="/login" c="white" underline="hover" >Login</Anchor>;
-  };
+  // const IncidentDropdown = ({ incidents }) => {
+  //   const incidentOptions = incidents.map((incident) => ({
+  //     value: incident._id,
+  //     label: `${incident.name} - ${incident.location}`,
+  //   }));
+  
+  //   return (
+  //     <Select
+  //       placeholder="Select an incident"
+  //       data={incidentOptions}
+  //       nothingFound="No incidents found"
+  //       searchable
+  //       classNames={{ dropdown: styles.dropdown }}
+  //     />
+  //   );
+  // };
+  
+  // IncidentDropdown.propTypes = {
+  //   incidents: PropTypes.array.isRequired,
+  // };
+
+  // const LoginButton = () => {
+  //   const { isAuthenticated } = useAuth0();
+  //   console.log(isAuthenticated)
+  //   if (isAuthenticated) {
+  //     return <Anchor component={Link} to="/logout" c="white" underline="hover" >Logout</Anchor>;
+  //   }
+  //   return <Anchor component={Link} to="/login" c="white" underline="hover" >Login</Anchor>;
+  // };
 
   const handleCitySelect = async (city) => {
     setSearchQuery("");
@@ -99,21 +166,35 @@ function Dashboard() {
 
     let latitude = parseFloat(city.lat);
     let longitude = parseFloat(city.lng);
+
     let pos = L.latLng(latitude, longitude);
     map.setView(pos, 10);
 
+    setCircleCenter([latitude, longitude]);
+    setCircleRadius(50000); 
+    setShowCircle(true);
+  
     console.log(pos)
-    try {
-      await fetch("/api/fire", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lat: latitude, lng: longitude })
-      });
-    } catch (error) {
-      console.error("Error sending city coordinates:", error);
+  try {
+    const response = await fetch("/api/fire", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lat: latitude, lng: longitude })
+    });
+    
+    const data = await response.json();
+    if (data.fireLocations) {
+      setFireLocations(data.fireLocations);
     }
+    if(data.waterLocations) {
+      setWaterLocations(data.waterLocations);
+    }
+  } catch (error) {
+    console.error("Error sending city coordinates:", error);
+  }
   };
   return (
+
     <AppShell
       header={{ height: 60 }}
       padding={0}
@@ -139,7 +220,7 @@ function Dashboard() {
           <Group className={styles.nav_buttons}>
             <Anchor component={Link} to="/" className={styles.cta_button}>Home</Anchor>
             <Anchor component={Link} to="/reports" className={styles.cta_button}>Submit Report</Anchor>
-            <Anchor component={Link} to="/" className={styles.cta_button}>Login</Anchor>
+            <Anchor component={Link} to="/login" className={styles.cta_button}>Login</Anchor>
           </Group>
         </Group>
       </AppShell.Header>
@@ -166,6 +247,8 @@ function Dashboard() {
           size="md"
           radius="md"
         />
+        
+
         {filteredCities.length > 0 && (
           <List spacing="xs" mt="xs" style={{
             listStyle: "none"
@@ -186,6 +269,30 @@ function Dashboard() {
             ))}
           </List>
         )}
+        
+        <Checkbox
+          label="View Incident List"
+          checked={viewIncidentList}
+          onChange={(event) => setViewIncidentList(event.currentTarget.checked)}/>
+        {viewIncidentList && (
+          <List spacing="xs" mt="xs" style={{
+            listStyle: "none"
+          }}>
+            {incidents.map((incident, index) => (
+              <List.Item
+                key={incident._id}
+                style={{ 
+                  cursor: 'pointer',
+                  padding: '8px',
+                  '&:hover': { backgroundColor: 'var(--mantine-color-red-9)' },
+                  listStyle: "none"
+                }}
+              >
+                Location: {incident.location}<br/>Name: {incident.name}<br/>Description: {incident.description}<br/>Time: {incident.date}
+              </List.Item>
+            ))}
+          </List>
+        )}
       </Paper>
   
       <div style={{ 
@@ -201,13 +308,37 @@ function Dashboard() {
           zoom={10}
           scrollWheelZoom={true}
           style={{ height: "100%", width: "100%" }}
-        >
+          >
           <MapController onMapReady={handleMapReady} />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-        </MapContainer>
+          {showCircle && (
+            <Circle 
+              center={circleCenter}
+              radius={circleRadius}
+              fillColor="blue"
+              fillOpacity={0.1}
+              color="blue"
+            />
+          )}
+          {fireLocations.map((location, index) => (
+            <Marker 
+              key={index}
+              position={[parseFloat(location.lat), parseFloat(location.long)]} 
+              icon={fireMarker}
+            />
+          ))}
+          {waterLocations.map((location, index) => (
+            <Marker 
+              key={index}
+              position={[parseFloat(location.lat), parseFloat(location.long)]} 
+              icon={waterMarker}
+            />
+          ))}
+
+          </MapContainer>
       </div>
     </AppShell>
   );

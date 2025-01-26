@@ -201,10 +201,8 @@ const Report = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    alert('Report submitted successfully!');
-    setFormData({ name: '', location: '', description: '' });
     try {
-      const response = await fetch('/api/incidents', {
+      const response = await fetch('/api/add-incident', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
