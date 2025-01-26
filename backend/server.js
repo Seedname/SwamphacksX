@@ -5,15 +5,26 @@ import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import bodyParser  from "body-parser"
 import dotenv from "dotenv";
-
+import { MongoClient, ServerApiVersion } from "mongodb";
 import http from "http";
 import https from "https";
- 
 import mongoose from 'mongoose';
-
 import router from './routes/routes.js';
 
-function setup() {
+let db;
+let reports;
+
+async function connectToMongoDB(client){
+  try{
+      await client.connect();
+      db = client.db('firewatch')
+      reports = db.collection('incident-reports');
+  } catch (error){
+      console.error('Failed to connect to database', error);
+  }
+}
+
+async function setup() {
     dotenv.config();
 
     const dev = process.env.NODE_ENV !== 'production';
@@ -40,6 +51,16 @@ function setup() {
     //     next();
     // });
 
+    // const client = new MongoClient(process.env.MONGO_URI, {
+    //     serverApi: {
+    //       version: ServerApiVersion.v1,
+    //       strict: true,
+    //       deprecationErrors: true,
+    //     }
+    // });
+
+    // await connectToMongoDB(client);
+
     app.use('/api', router);
 
     app.get('*', (req, res) => {
@@ -59,4 +80,53 @@ function setup() {
 
 }
 
-setup();
+
+  
+
+
+// await connectToMongoDB();
+
+// const app = express();
+
+// let server;
+
+await setup();
+// const app = express();
+// app.use(cors());
+// app.use(express.json()); // Middleware to parse JSON requests
+
+// // Connect to MongoDB
+// mongoose.connect(process.env.MONGO_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+// const db = mongoose.connection;
+// db.once('open', () => console.log('Connected to MongoDB'));
+
+// // Create a schema for the report
+// const reportSchema = new mongoose.Schema({
+//   name: String,
+//   location: String,
+//   description: String,
+//   date: { type: Date, default: Date.now },
+// });
+
+// const Report = mongoose.model('Report', reportSchema);
+
+// // API endpoint to receive form data
+// app.post('/api/reports', async (req, res) => {
+//   try {
+//     const newReport = new Report(req.body);
+//     await newReport.save();
+//     res.status(201).json({ message: 'Report submitted successfully!' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error submitting report', error });
+//   }
+// });
+
+// // Start the server
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// setup();

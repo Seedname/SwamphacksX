@@ -15,6 +15,7 @@ const App = () => {
       domain={DOMAIN}
       clientId={CLIENT_ID}
       authorizationParams={{ redirect_uri: window.location.origin }}
+      redirect_uri = {window.location.origin}
     >
     <div>
         <Routes>
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/login" element={<Login/>} />
+          {/* <Route path="/logout" element={<Logout/>} /> */}
           {/* <Route path="/login" element={<Login />} />             */}
           {/* <Route
             path='/dashboard' 
@@ -30,7 +32,7 @@ const App = () => {
                 <Dashboard/>
                 <Login/>
                 <Home/>
-              </ProtectedRoute>
+              </ProtectedRoute>`
             }/> */}
           {/* <Route path='/login' element={<Login/>} /> */}
         </Routes>

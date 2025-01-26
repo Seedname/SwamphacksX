@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+/*import React, { useState } from 'react';
 // import { useAuth0 } from '@auth0/auth0-react';
 import styles from './Reports.module.css'
 
@@ -175,5 +175,112 @@ const Report = () => {
 //     cursor: 'pointer',
 //   },
 // };
+
+export default Report;*/
+
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import styles from './Reports.module.css';
+
+const Report = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    location: '',
+    description: '',
+  });
+
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('Form submitted:', formData);
+    alert('Report submitted successfully!');
+    setFormData({ name: '', location: '', description: '' });
+
+    // Uncomment and update the following lines to send data to the server
+    // const response = await fetch('http://localhost:5000/api/reports', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(formData),
+    // });
+
+    // if (response.ok) {
+    //   alert('Report submitted successfully!');
+    //   setFormData({ name: '', location: '', description: '' });
+    // } else {
+    //   alert('Failed to submit report.');
+    // }
+  };
+
+  return (
+    <>
+    
+
+    <div className={styles.container}>
+      
+      <h1 className={styles.heading}>Submit Wildfire Report</h1>
+      <h2 className={styles.subheading}>If you want to report a wildfire-related incident, please report it here!</h2>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
+          <label>Name:</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Location:</label>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Description:</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className={styles.textarea}
+            rows="5"
+            required
+          />
+        </div>
+        <div style={{
+          display: "inline-flex",
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "center"
+        }}>
+          {/* <div className={styles.button}>
+            <Link to="/" className={styles.backButton}>Back to Home</Link>`
+          </div> */} 
+          <button type="button" className={styles.button} style={{
+              marginRight: "10px"
+          }}><Link to="/">Back to Home</Link></button>
+          <button type="submit" className={styles.button} style={{
+              marginLeft: "10px"
+          }}>Submit Report</button>
+        </div>
+      </form>
+    </div>
+    </>
+  );
+};
 
 export default Report;
