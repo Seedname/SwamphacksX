@@ -59,5 +59,10 @@ export const loadFires = async (req, res) => {
 };
 
 export const planRoute = async (req, res) => {
-  
+    if (!body) {
+        console.log("no body passed");
+        return res.status(400);
+    }
+
+    
 };

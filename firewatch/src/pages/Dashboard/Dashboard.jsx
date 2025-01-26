@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { MapContainer, TileLayer, useMap, Marker, Popup, Circle } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
-import { Container, Select, Checkbox, Group, Paper, TextInput, List, Anchor, AppShell, Grid, Image, Title } from '@mantine/core';
+import { Container, Select, Checkbox, Group, Paper, TextInput, List, Anchor, AppShell, Grid, Image, Title, Stack, Text, Divider } from '@mantine/core';
 import styles from './Dashboard.module.css';
 import { useAuth0 } from "@auth0/auth0-react";
 import fireIcon from './FireIcon.svg'
@@ -130,35 +130,6 @@ function Dashboard() {
     label: `${incident.name} - ${incident.location}`,
   }));
 
-  // const IncidentDropdown = ({ incidents }) => {
-  //   const incidentOptions = incidents.map((incident) => ({
-  //     value: incident._id,
-  //     label: `${incident.name} - ${incident.location}`,
-  //   }));
-  
-  //   return (
-  //     <Select
-  //       placeholder="Select an incident"
-  //       data={incidentOptions}
-  //       nothingFound="No incidents found"
-  //       searchable
-  //       classNames={{ dropdown: styles.dropdown }}
-  //     />
-  //   );
-  // };
-  
-  // IncidentDropdown.propTypes = {
-  //   incidents: PropTypes.array.isRequired,
-  // };
-
-  // const LoginButton = () => {
-  //   const { isAuthenticated } = useAuth0();
-  //   console.log(isAuthenticated)
-  //   if (isAuthenticated) {
-  //     return <Anchor component={Link} to="/logout" c="white" underline="hover" >Logout</Anchor>;
-  //   }
-  //   return <Anchor component={Link} to="/login" c="white" underline="hover" >Login</Anchor>;
-  // };
 
   const handleCitySelect = async (city) => {
     setSearchQuery("");
@@ -173,8 +144,6 @@ function Dashboard() {
     setCircleCenter([latitude, longitude]);
     setCircleRadius(50000); 
     setShowCircle(true);
-  
-    console.log(pos)
   try {
     const response = await fetch("/api/fire", {
       method: "POST",
@@ -218,9 +187,9 @@ function Dashboard() {
             </Title>
           </Group>
           <Group className={styles.nav_buttons}>
-            <Anchor component={Link} to="/" className={styles.cta_button}>Home</Anchor>
-            <Anchor component={Link} to="/reports" className={styles.cta_button}>Submit Report</Anchor>
-            <Anchor component={Link} to="/login" className={styles.cta_button}>Login</Anchor>
+            <a href = '/' className={styles.cta_button}>Home</a>
+            <a href = '/reports' className={styles.cta_button}>Submit Report</a>
+            <a href = '/login' className={styles.cta_button}>Login</a>
           </Group>
         </Group>
       </AppShell.Header>
@@ -276,7 +245,9 @@ function Dashboard() {
           onChange={(event) => setViewIncidentList(event.currentTarget.checked)}/>
         {viewIncidentList && (
           <List spacing="xs" mt="xs" style={{
-            listStyle: "none"
+            listStyle: "none",
+            height: "70vh",
+            overflow: "scroll"
           }}>
             {incidents.map((incident, index) => (
               <List.Item
@@ -288,7 +259,23 @@ function Dashboard() {
                   listStyle: "none"
                 }}
               >
-                Location: {incident.location}<br/>Name: {incident.name}<br/>Description: {incident.description}<br/>Time: {incident.date}
+              <Stack spacing="xs">
+                <Group>
+                  <Text fw={700} size="sm" c="dimmed">Location:</Text>
+                  <Text>{incident.location}</Text>
+                </Group>
+                <Group>
+                  <Text fw={700} size="sm" c="dimmed">Name:</Text>
+                  <Text>{incident.name}</Text>
+                </Group>
+                <Text fw={700} size="sm" c="dimmed">Description:</Text>
+                <Text>{incident.description}</Text>
+                <Group mt="xs">
+                  <Text fw={700} size="sm" c="dimmed">Time:</Text>
+                  <Text>{new Date(incident.date).toLocaleString()}</Text>
+                </Group>
+                <Divider my="xs" /> 
+              </Stack>
               </List.Item>
             ))}
           </List>

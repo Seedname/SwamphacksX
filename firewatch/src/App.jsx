@@ -56,9 +56,10 @@ import { Auth0Provider } from '@auth0/auth0-react';
 const App = () => {
   return (
     <Auth0Provider 
-      // domain="dev-qqmcm7oc7pbvgr83.us.auth0.com"
-      // clientId="i4oGHkrNdGC8NfJMB8lxr7dH4DIJ97cN"
-      // redirectUri={window.location.origin}
+      domain="dev-qqmcm7oc7pbvgr83.us.auth0.com"
+      clientId="i4oGHkrNdGC8NfJMB8lxr7dH4DIJ97cN"
+      redirectUri={window.location.origin}
+      authorizationParams={{ redirect_uri: window.location.origin }}
     >
       <div>
         <Routes>

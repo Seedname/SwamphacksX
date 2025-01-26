@@ -21,7 +21,7 @@ const Home = () => {
       <div className={styles.content}>
         <div className={styles.text_wrapper}>
           <section className={styles.home_header}>
-            <h2>Your trusted tool to predict and track wildfires in real time.</h2>
+            <h2>Track wildfires in real time, find the best route and water sources nearby, and submit incident reports to help the community!</h2>
           </section>
 
           <section className={styles.home_description}>
@@ -38,8 +38,10 @@ const Home = () => {
             }}>
               Dashboard
             </button>
-            <button className={styles.cta_button} onClick={() => alert('Learn more about wildfires...')}>
-              Learn More
+            <button className={styles.cta_button} onClick={() => {
+              window.location.href = '/reports';
+            }}>
+              Submit Report
             </button>
           </section>
 
