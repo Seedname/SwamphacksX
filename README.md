@@ -1,5 +1,5 @@
 
-![firelogo](https://github.com/user-attachments/assets/c2e3a7a2-ff1a-42dc-921f-a89183df9704)
+![firelogo](https://github.com/user-attachments/assets/c2e3a7a2-ff1a-42dc-921f-a89183df9704 | height=100)
 
 
 Welcome to FireWatch!
