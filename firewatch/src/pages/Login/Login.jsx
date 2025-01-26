@@ -30,8 +30,13 @@ import { useAuth0 } from "@auth0/auth0-react";
 // export default LoginButton;
 
 const Login = () => {
-    const { loginWithRedirect } = useAuth0();
-    loginWithRedirect();
+    const { loginWithRedirect, isAuthenticated } = useAuth0();
+    // if (!isAuthenticated) {
+        loginWithRedirect();
+    // }
+    // else {
+        // window.location.href = '/dashboard';
+    // }
 }
 
 export default Login;

@@ -1,5 +1,5 @@
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Concert', Arial, sans-serif;
   margin: 0;
   padding: 0;
   /* background-image: url('/firewatch.avif'); 
@@ -36,13 +36,14 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  opacity: 0.7;
+  /* opacity: 0.7; */
 }
 
 .navbar {
   width: 100%;
   height: 10vh;
-  background-color: #ff6347; /* Tomato background color */
+  background-color: rgb(173, 52, 25); /* Tomato background color */
+  box-shadow: 1px 1px 5px rgb(200, 52, 25); /* Subtle shadow */
   display: flex;
   align-items: center;
   justify-content: space-between; /* Space between title and login button */
@@ -58,6 +59,7 @@ body {
 .navbar_title {
   display: flex;
   align-items: center;
+  font-family: 'Concert';
 }
 
 .navbar_logo {
@@ -134,4 +136,13 @@ body {
   margin-top: 5vh;
   font-size: 1.2vw;
   color: #ddd; /* Light gray text for contrast */
+}
+
+@font-face {
+  font-family: 'Concert';
+  src: url('/ConcertOne-Regular.woff2') format('woff2'),
+       url('/ConcertOne-Regular.woff') format('woff'),
+       url('/ConcertOne-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }

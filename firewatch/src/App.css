@@ -67,10 +67,10 @@ html, body, div#root div div {
   font-family: 'EuclidCircular', sans-serif;
 } */
 
-/* @font-face {
-  font-family: 'EuclidCircular';
-  src: url('./Euclid Circular A Regular.ttf') format('truetype');
-} */
+@font-face {
+  font-family: 'Concert';
+  src: url('/ConcertOne-Regular.ttf') format('woff2');
+}
  
 
 
