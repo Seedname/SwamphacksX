@@ -7,6 +7,8 @@ import styles from './Dashboard.module.css';
 import { useAuth0 } from "@auth0/auth0-react";
 import fireIcon from './FireIcon.svg'
 import waterIcon from './WaterIcon.svg'
+import { LoginLink } from '../Login/LoginButton'
+
 function MapController({ onMapReady }) {
   const map = useMap();
   
@@ -189,7 +191,7 @@ function Dashboard() {
           <Group className={styles.nav_buttons}>
             <a href = '/' className={styles.cta_button}>Home</a>
             <a href = '/reports' className={styles.cta_button}>Submit Report</a>
-            <a href = '/login' className={styles.cta_button}>Login</a>
+            <LoginLink/>
           </Group>
         </Group>
       </AppShell.Header>

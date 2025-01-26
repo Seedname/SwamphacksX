@@ -18,25 +18,46 @@ export default function Login() {
     </div>
   )
 }*/
-import React from "react";
+// import React from "react";
+// import { useAuth0 } from "@auth0/auth0-react";
+
+// // const LoginButton = () => {
+// //   const { loginWithRedirect } = useAuth0();
+
+// //   return <button onClick={() => loginWithRedirect()}>Log In</button>;
+// // };
+
+// // export default LoginButton;
+
+// const Login = () => {
+//     const { loginWithRedirect, isAuthenticated } = useAuth0();
+//     // if (!isAuthenticated) {
+//         loginWithRedirect();
+//     // }
+//     // else {
+//         // window.location.href = '/dashboard';
+//     // }
+// }
+
+// export default Login;
+
 import { useAuth0 } from "@auth0/auth0-react";
-
-// const LoginButton = () => {
-//   const { loginWithRedirect } = useAuth0();
-
-//   return <button onClick={() => loginWithRedirect()}>Log In</button>;
-// };
-
-// export default LoginButton;
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-    const { loginWithRedirect, isAuthenticated } = useAuth0();
-    // if (!isAuthenticated) {
-        loginWithRedirect();
-    // }
-    // else {
-        // window.location.href = '/dashboard';
-    // }
-}
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      loginWithRedirect();
+    }
+  }, [isAuthenticated, navigate, loginWithRedirect]);
+
+  return null;
+};
 
 export default Login;
