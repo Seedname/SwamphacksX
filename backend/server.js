@@ -9,13 +9,16 @@ import dotenv from "dotenv";
 import http from "http";
 import https from "https";
  
+import mongoose from 'mongoose';
+
+import router from './routes/routes.js';
+
 function setup() {
     dotenv.config();
 
     const dev = process.env.NODE_ENV !== 'production';
 
     const app = express();
-    let port = dev ? 80 : 443;
 
     app.use(cors({
         origin: true,
@@ -37,6 +40,7 @@ function setup() {
     //     next();
     // });
 
+    app.use('/api', router);
 
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '../firewatch/dist', 'index.html'));
@@ -45,10 +49,14 @@ function setup() {
     http.createServer(app).listen(80);
 
     if (!dev) {
-        var privateKey  = fs.readFileSync('/etc/letsencrypt/live/firewatch.wiki/privkey.pem', 'utf8');
-        var certificate = fs.readFileSync('/etc/letsencrypt/live/firewatch.wiki/fullchain.pem', 'utf8')
+        let privateKey  = fs.readFileSync('/etc/letsencrypt/live/firewatch.wiki/privkey.pem', 'utf8');
+        let certificate = fs.readFileSync('/etc/letsencrypt/live/firewatch.wiki/fullchain.pem', 'utf8');
+        let credentials = {key: privateKey, cert: certificate};
         https.createServer(credentials, app).listen(443);
     }
+
+    // app.use('/incidentreports', incidentRoutes);
+
 }
 
 setup();

@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 // import Login from './pages/Login/Login'
 import Home from './pages/Home/Home';
 import Dashboard from './pages/Dashboard/Dashboard';
+import Reports from './pages/Reports/Reports'
 import Login, { DOMAIN, CLIENT_ID } from './pages/Login/Login';
 import { Auth0Provider } from '@auth0/auth0-react'
 //import LoginForm from './pages/Login/login-form'
@@ -19,6 +20,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/login" element={<Login/>} />
           {/* <Route path="/login" element={<Login />} />             */}
           {/* <Route
             path='/dashboard' 

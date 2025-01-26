@@ -21,10 +21,22 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 export const DOMAIN = 'dev-qqmcm7oc7pbvgr83.us.auth0.com';
 export const CLIENT_ID = 's66NIrhZLocictYcNrvD0HLUe4pPDhgM';
+export let logged = false;
 
 const Login = () => {
-    const { user, logout, loginWithRedirect, isAuthenticated } = useAuth0();
-    loginWithRedirect();
+    if (!logged) {
+        const { loginWithRedirect } = useAuth0();
+        loginWithRedirect();
+        logged = true;
+    }
+}
+
+const Logoff = () => {
+    if (logged) {
+        const { user, logoff } = useAuth0();
+        logoff();
+        logged = false;
+    }
 }
 
 export default Login;

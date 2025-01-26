@@ -1,131 +1,146 @@
-import React, { useState } from 'react';
-import styles from './Dashboard.module.css'
-import customLogo from './FireIcon.svg'; // Path to the logo image
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import LoginButton from '../../components/loginbutton';
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { MapContainer, TileLayer } from 'react-leaflet';
+import { Link } from 'react-router-dom';
+import { Container, Group, Title, Paper, TextInput, List, Anchor, AppShell, Grid } from '@mantine/core';
+import './Dashboard.module.css';
 
 function Dashboard() {
-  // const MapComponent = () => {
-  const customIcon = new L.Icon({
-    iconUrl: customLogo,  // Logo image URL
-    iconSize: [32, 32],  // Size of the icon (adjust as needed)
-    iconAnchor: [16, 16], // Point of the icon to anchor (bottom center)
-    popupAnchor: [0, -16], // Adjust popup location
-    
-  })
-// };
+  const [csvData, setCsvData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredCities, setFilteredCities] = useState([]);
+  const debounceTimeout = useRef(null);
 
-  // const customIcon = new L.Icon({
-  //   iconUrl: customLogo,
-  //   iconRetinaUrl: customLogo,
-  //   iconAnchor: null,
-  //   popupAnchor: null,
-  //   shadowUrl: null,
-  //   shadowSize: null,
-  //   shadowAnchor: null,
-  //   iconSize: new L.Point(60, 75),
-  //   className: 'leaflet-div-icon'
-  // });
+  useEffect(() => {
+    const fetchCSV = async () => {
+      try {
+        const response = await fetch("/worldcities.csv");
+        const csvText = await response.text();
+        const rows = csvText.split("\n").slice(1);
+        const data = rows.map(row => {
+          const [city, city_ascii, lat, lng, country] = row.split(",");
+          return { city, city_ascii, lat: parseFloat(lat), lng: parseFloat(lng), country };
+        });
+        setCsvData(data);
+      } catch (error) {
+        console.error("Error loading CSV:", error);
+      }
+    };
 
-  return (    
-    <div className={styles.app_container}>
-      <div className={styles.nav}>
-        <div className={styles.nav_links}>
-          
-            <div className = {styles.nav_links_buttons}>
-              <a href="/">Home</a>
-            </div>
+    fetchCSV();
+  }, []);
 
-            <div className = {styles.nav_links_buttons}>
-              <a href="#about">About Us</a>
-            </div>
+  const handleSearch = useCallback((query) => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
 
-            <div className = {styles.nav_links_buttons}>
-              <a href="#services">Services</a>
-            </div>
+    debounceTimeout.current = setTimeout(() => {
+      let matches = [];
+      for (let i = 0; i < csvData.length; i++) {
+        if (!csvData[i] || !csvData[i]?.city_ascii) {
+          continue;
+        }
 
-            <div className = {styles.nav_links_buttons}>
-              <a href="#contact">Contact</a>
-            </div>
-        </div>
-        
-        {/* <div  className = {styles.nav_login}>
-          <a href = "#">Login</a>
-        </div> */}
-        <div className={styles.nav_login} onClick={()=>{
-          const { user, loginWithRedirect, isAuthenticated, logOut } = useAuth0();
-          if (isAuthenticated) {
-            logOut();
+        if (csvData[i].city_ascii.toLowerCase().includes(query.toLowerCase())) {
+          matches.push(csvData[i]);
+          if (matches.length >= 10) {
+            break;
           }
-          else {
-            loginWithRedirect();
-          }
-        }}>
-          Login
-        </div>
-      </div>
+        }
+      }
+      setFilteredCities(matches);
+    }, 300);
+  }, [csvData]);
 
+  const handleInputChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
+  };
 
+  const handleCitySelect = async (latitude, longitude) => {
+    setSearchQuery("");
+    setFilteredCities([]);
 
-      <div className = {styles.map_wrapper}>
-      <MapContainer 
-        center={[29.6516, -82.3248]} 
-        zoom="13" 
-        scrollWheelZoom={true}
-        style={{width: "100%", 
-          height: "100%",
-          borderRadius : "10px"
-          // position: "absolute",
-          // top: "50%", 
-          // left: "0",
-          // transform: "translateY(-50%)"}}
-        }}
-      >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker position={[29.6516, -82.3248]} icon={customIcon}>
-            <Popup>
-              University of Florida!!!!!??? <br /> This is the location of a fire. 
-            </Popup>
-          </Marker>
-        </MapContainer>
-      </div>
-        {/* <div id="map" className = {styles.map}>
-        </div>
-        <script src="leaflet.js"></script>
-        <script src="map.js"></script> */}
-    </div>
-  
+    try {
+      await fetch("/api/fire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lat: latitude, lng: longitude })
+      });
+    } catch (error) {
+      console.error("Error sending city coordinates:", error);
+    }
+  };
+  return (
+    <AppShell
+      header={{ height: 60 }}
+      padding="md"
+    >
+      <AppShell.Header p="xs" style={{ backgroundColor: 'var(--mantine-color-red-6)' }}>
+        <Group justify="space-between">
+          <Title order={2} c="white">Dashboard</Title>
+          <Group>
+            <Anchor component={Link} to="/" c="white" underline="hover">Home</Anchor>
+            <Anchor component={Link} to="/reports" c="white" underline="hover">Submit Report</Anchor>
+            <Anchor component={Link} to="#about" c="white" underline="hover">About Us</Anchor>
+            <Anchor component={Link} to="#contact" c="white" underline="hover">Contact</Anchor>
+            <Anchor component={Link} to="/login" c="white" underline="hover">Login</Anchor>
+          </Group>
+        </Group>
+      </AppShell.Header>
+
+      <Container size="xl" mt="md">
+        <Grid gutter="md">
+          <Grid.Col span={8}>
+            <Paper style={{ height: 'calc(100vh - 140px)', overflow: 'hidden', borderRadius: '8px' }}>
+              <MapContainer
+                center={[34.0549, -118.2426]}
+                zoom={10}
+                scrollWheelZoom={true}
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+              </MapContainer>
+            </Paper>
+          </Grid.Col>
+
+          <Grid.Col span={4}>
+            <Paper shadow="sm" p="md" withBorder>
+              <Title order={4} mb="md">Search Location</Title>
+              <TextInput
+                placeholder="Search map..."
+                value={searchQuery}
+                onChange={handleInputChange}
+                size="md"
+                radius="md"
+              />
+              {filteredCities.length > 0 && (
+                <List spacing="xs" mt="xs">
+                  {filteredCities.map((city, index) => (
+                    <List.Item
+                      key={index}
+                      onClick={() => handleCitySelect(city.lat, city.lng)}
+                      style={{ 
+                        cursor: 'pointer',
+                        padding: '8px',
+                        '&:hover': { backgroundColor: 'var(--mantine-color-gray-0)' }
+                      }}
+                    >
+                      {city.city_ascii}, {city.country}
+                    </List.Item>
+                  ))}
+                </List>
+              )}
+            </Paper>
+          </Grid.Col>
+        </Grid>
+      </Container>
+    </AppShell>
   );
-
-  // return (
-  //   <div className={styles.app_container}>
-  //     <h1 className={styles.title}>Wildfire Tracker</h1>
-  //     <div className={styles.search_container}>
-  //       <input
-  //         type="text"
-  //         placeholder="Enter location..."
-  //         value={location}
-  //         onChange={(e) => setLocation(e.target.value)}
-  //         className={styles.search_input}
-  //       />
-  //       <button onClick={handleSearch} className={styles.search_button}>Search</button>
-  //     </div>
-  //     <div className={styles.wildfire_list}>
-  //       {wildfires.map((fire) => (
-  //         <div key={fire.id} className= {styles.wildfire_card}>
-  //           <h2>{fire.name}</h2>
-  //           <p><strong>Location:</strong> {fire.location}</p>
-  //           <p className={fire.status === 'Active' ? 'status-active' : 'status-contained'}>
-  //             {fire.status}
-  //           </p>
-  //         </div>
-  //       ))}
-  //     </div>
-  //   </div>
-  // );
 }
 
 export default Dashboard;

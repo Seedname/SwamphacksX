@@ -1,0 +1,162 @@
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import styles from './Dashboard.module.css';
+import customLogo from './FireIcon.svg'; // Path to the logo image
+import { MapContainer, TileLayer } from 'react-leaflet';
+import { Link } from 'react-router-dom';
+
+function Dashboard() {
+  const [csvData, setCsvData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredCities, setFilteredCities] = useState([]);
+  const debounceTimeout = useRef(null);
+
+  // Load CSV data on component mount
+  useEffect(() => {
+    const fetchCSV = async () => {
+      try {
+        const response = await fetch("/worldcities.csv");
+        const csvText = await response.text();
+        const rows = csvText.split("\n").slice(1); // Skip header row
+        const data = rows.map(row => {
+          const [city, city_ascii, lat, lng, country] = row.split(",");
+          return { city, city_ascii, lat: parseFloat(lat), lng: parseFloat(lng), country };
+        });
+
+        setCsvData(data);
+      } catch (error) {
+        console.error("Error loading CSV:", error);
+      }
+    };
+
+    fetchCSV();
+  }, []);
+
+  // Debounce the search function
+  const handleSearch = useCallback((query) => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      let matches = [];
+      for (let i = 0; i < csvData.length; i++) {
+        if (!csvData[i] || !csvData[i]?.city_ascii) {
+          continue;
+        }
+
+        if (csvData[i].city_ascii.toLowerCase().includes(query.toLowerCase())) {
+          matches.push(csvData[i]);
+          if (matches.length >= 10) {
+            break;
+          }
+        }
+      }
+      console.log(matches);
+      setFilteredCities(matches);
+    }, 300); // 300ms debounce delay
+  }, [csvData]);
+
+  const handleInputChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
+  };
+
+  const handleCitySelect = async (latitude, longitude) => {
+    console.log(latitude);
+    console.log(longitude);
+    setSearchQuery("");
+    setFilteredCities([]);
+
+    try {
+      await fetch("/api/fire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lat: latitude, lng: longitude })
+      });
+    } catch (error) {
+      console.error("Error sending city coordinates:", error);
+    }
+  };
+  
+  // if (!logged) {
+    return (    
+      <div className={styles.app_container}>
+        <div className={styles.nav}>
+          <div className={styles.nav_links}>
+            
+            <div className = {styles.nav_links_buttons}>
+              <a href="/">Home</a>
+            </div>
+      
+            <div className = {styles.nav_links_buttons}>
+              <a href="#about">About Us</a>
+            </div>
+
+            <div className = {styles.nav_links_buttons}>
+              <Link to="/reports">Submit Report</Link>
+            </div>
+
+            <div className = {styles.nav_links_buttons}>
+              <a href="#contact">Contact</a>
+            </div>
+              
+            <div className = {styles.nav_links_buttons}>
+              <a href = "/login">Login</a>
+            </div>
+          </div>  
+        </div>
+          
+
+        <div className={styles.search_container}>
+          <form className={styles.search_bar} onSubmit={(e) => e.preventDefault()}>
+            <input
+              type="text"
+              placeholder="Search map..."
+              value={searchQuery}
+              onChange={handleInputChange}
+            />
+            
+            <button>
+              <img src = "glass.png"></img>
+            </button>
+          </form>
+          {filteredCities.length > 0 && (
+            <ul className={styles.dropdown}>
+              {filteredCities.map((city, index) => (
+                <li
+                  key={index}
+                  onClick={() => handleCitySelect(city.lat, city.lng)}
+                >
+                  {city.city_ascii}, {city.country}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className={styles.Map_List_Container}>
+          <div className={styles.map_wrapper}>
+            <MapContainer 
+              center={[34.0549, -118.2426]} 
+              zoom={10} 
+              scrollWheelZoom={true}
+              style={{ width: "100%", height: "100%", borderRadius: "10px" }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+            </MapContainer>
+          </div>
+
+          <div className={styles.Report_List_Wrapper}>
+            <div className={styles.Report_List} id="ReportList"> {/* Report List code */} </div>
+          </div>
+        </div>
+      </div>
+    );
+  // }
+}
+
+export default Dashboard;

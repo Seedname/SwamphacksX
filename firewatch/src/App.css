@@ -62,3 +62,22 @@ html, body, div#root div div {
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* body {
+  font-family: 'EuclidCircular', sans-serif;
+} */
+
+@font-face {
+  font-family: 'EuclidCircular';
+  src: url('./Euclid Circular A Regular.ttf') format('truetype');
+}
+ 
+
+
+.corner-icon {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid blue;
+}

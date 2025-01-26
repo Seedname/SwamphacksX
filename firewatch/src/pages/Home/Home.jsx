@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './Home.module.css'; // Assuming you'll add some custom styles for this page
 import LoginButton from '../../components/loginbutton';
+// import './App.css';
 
 const Home = () => {
   return (
@@ -27,7 +28,7 @@ const Home = () => {
         {/* <button className={styles.cta_button} onClick={()=>{
           window.location.href = '/login';
         }}>Login</button> */}
-        <LoginButton className={styles.cta_button}></LoginButton>
+        <LoginButton className={styles.cta_button}>{}</LoginButton>
         <button className={styles.cta_button} onClick={() => alert('Learn more about wildfires...')}>
           Learn More
         </button>
@@ -39,5 +40,27 @@ const Home = () => {
     </div>
   );
 };
+
+const submitIncident = async () => {
+  const incidentData = {
+    type: 'Fire',
+    description: 'Wildfire near the forest',
+    location: { lat: 29.6516, lng: -82.3248 }
+  };
+
+  try {
+    const response = await fetch('http://localhost:5000/incidents', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(incidentData)
+    });
+
+    const data = await response.json();
+    console.log('Incident reported:', data);
+  } catch (error) {
+    console.error('Error reporting incident:', error);
+  }
+};
+
 
 export default Home;

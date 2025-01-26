@@ -1,7 +1,7 @@
 /* Home.css */
 .home_container {
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     padding: 20px;
   }
   
@@ -10,6 +10,7 @@
     color: white;
     padding: 30px;
     border-radius: 10px;
+    font-family: 'Arial';
   }
   
   .home_header h1 {
@@ -50,4 +51,9 @@
     font-size: 0.9rem;
     color: #555;
   }
-  
+
+  /* @font-face {
+    font-family: 'EuclidCircular';
+    src: url('./Euclid Circular A Regular.ttf') format('truetype');
+  }
+    */
