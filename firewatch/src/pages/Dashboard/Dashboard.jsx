@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, useMap, Marker, Popup, Circle } from 'react-leaflet';
-import { Link } from 'react-router-dom';
+import { MapContainer, TileLayer, useMap, Marker, Popup, Circle, Polyline } from 'react-leaflet';
 import L from 'leaflet';
-import { Container, Select, Checkbox, Group, Paper, TextInput, List, Anchor, AppShell, Grid, Image, Title, Stack, Text, Divider } from '@mantine/core';
+import { Button, Container, Select, Checkbox, Group, Paper, TextInput, List, Anchor, AppShell, Grid, Image, Title, Stack, Text, Divider } from '@mantine/core';
 import styles from './Dashboard.module.css';
-import { useAuth0 } from "@auth0/auth0-react";
 import fireIcon from './FireIcon.svg'
 import waterIcon from './WaterIcon.svg'
+import helicopterIcon from './HelicopterIcon.svg'
+import redXIcon from './redXIcon.svg'
 import { LoginLink } from '../Login/LoginButton'
 
 function MapController({ onMapReady }) {
@@ -35,6 +35,14 @@ function Dashboard() {
   const [circleRadius, setCircleRadius] = useState(50);
   const [showCircle, setShowCircle] = useState(false);
 
+  const [routeSegments, setRouteSegments] = useState([]);
+  const [isPlanning, setIsPlanning] = useState(false);
+
+  const [heliMarkerPos, setHeliMarkerPos] = useState([0, 0]);
+  const [xMarkerPos, setxMarkerPos] = useState([0, 0]);
+
+  const [displayPath, setDisplayPath] = useState(false);
+
   const fireMarker = new L.Icon({
     iconUrl: fireIcon,
     iconSize: [32, 32],
@@ -49,7 +57,19 @@ function Dashboard() {
     popupAnchor: [0, -16],
   });
 
-  
+  const helicopterMarker = new L.Icon({
+    iconUrl: helicopterIcon,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16],
+  });
+
+  const redXMarker = new L.Icon({
+    iconUrl: redXIcon,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16],
+  });
 
   const handleMapReady = useCallback((mapInstance) => {
     setMap(mapInstance);
@@ -81,15 +101,6 @@ function Dashboard() {
   }, []);
 
   useEffect(async () => {
-    // const fetchIncidents = async () => {
-    //   try {
-    //     const response = await fetch('/api/get-incidents');
-    //     const data = await response.json();
-    //     console.log(data)
-    //   } catch (error) {
-    //     console.error('Error fetching incidents:', error);
-    //   }
-    // };
     const response = await fetch("/api/get-incidents", {
       method: "POST",
       headers: { "Content-Type": "application/json" }
@@ -164,6 +175,35 @@ function Dashboard() {
     console.error("Error sending city coordinates:", error);
   }
   };
+
+  const handlePlanRoute = async () => {
+    setIsPlanning(true);
+    try {
+      const response = await fetch("/api/plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          fireLocations,
+          waterLocations 
+        })
+      });
+      
+      const data = await response.json();
+      for (let i = 0; i < data.segments.length; i++) {
+        data.segments[i].start = L.latLng(data.segments[i].start.lat, data.segments[i].start.long);
+        data.segments[i].end = L.latLng(data.segments[i].end.lat, data.segments[i].end.long);
+      }
+
+      setxMarkerPos([data.finalPosition.lat, data.finalPosition.long]);
+      setHeliMarkerPos([data.path[0].lat, data.path[0].long]);
+      setRouteSegments(data.segments);
+      setDisplayPath(true);
+    } catch (error) {
+      console.error("Error planning route:", error);
+    }
+    setIsPlanning(false);
+  };
+  
   return (
 
     <AppShell
@@ -210,7 +250,19 @@ function Dashboard() {
         p="md" 
         withBorder
       >
-        <Title order={4} mb="md">Search Location</Title>
+        <Group mb="md">
+          <Title order={4}>Search Location</Title>
+          {showCircle && (
+            <Button 
+              loading={isPlanning}
+              onClick={handlePlanRoute}
+              variant="filled"
+              color="blue"
+            >
+              Plan Route
+            </Button>
+          )}
+        </Group>
         <TextInput
           placeholder="Search map..."
           value={searchQuery}
@@ -312,21 +364,51 @@ function Dashboard() {
               color="blue"
             />
           )}
-          {fireLocations.map((location, index) => (
-            <Marker 
+          {displayPath && 
+            (<Marker 
+              position={heliMarkerPos} 
+              icon={helicopterMarker}
+            />)
+          }
+          {displayPath &&
+            (<Marker 
+              position={xMarkerPos} 
+              icon={redXMarker}
+            />)
+          }
+          {fireLocations
+          .filter(location => {
+            const position = [parseFloat(location.lat), parseFloat(location.long)];
+            return (position[0] !== xMarkerPos[0] || position[1] !== xMarkerPos[1]) && (position[0] !== heliMarkerPos[0] || position[1] !== heliMarkerPos[1]);
+          })
+          .map((location, index) => (
+            <Marker
               key={index}
-              position={[parseFloat(location.lat), parseFloat(location.long)]} 
+              position={[parseFloat(location.lat), parseFloat(location.long)]}
               icon={fireMarker}
             />
           ))}
-          {waterLocations.map((location, index) => (
-            <Marker 
+          {waterLocations
+          .filter(location => {
+            const position = [parseFloat(location.lat), parseFloat(location.long)];
+            return position[0] !== heliMarkerPos[0] || position[1] !== heliMarkerPos[1];
+          })
+          .map((location, index) => (
+            <Marker
               key={index}
-              position={[parseFloat(location.lat), parseFloat(location.long)]} 
+              position={[parseFloat(location.lat), parseFloat(location.long)]}
               icon={waterMarker}
             />
           ))}
-
+          {routeSegments.map((segment, index) => (
+            <Polyline
+              key={index}
+              positions={[segment.start, segment.end]}
+              color={'yellow'}
+              weight={3}
+              opacity={0.8}
+            />
+          ))}
           </MapContainer>
       </div>
     </AppShell>

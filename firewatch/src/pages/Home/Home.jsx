@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './Home.module.css'; // Assuming you'll add some custom styles for this page
+import styles from './Home.module.css';
 import LoginButton from '../Login/LoginButton.jsx';
 
 const Home = () => {
@@ -11,24 +11,21 @@ const Home = () => {
         <h1 className={styles.navbar_title}>
           Firewatch
         </h1>
+
         <div className={styles.navbar_login}>
           <LoginButton/>
-          {/* <button className={styles.cta_button} onClick={()=>{window.location.href = '/login'}}>
-            Login
-          </button> */}
         </div>
       </header>
 
       <div className={styles.content}>
         <div className={styles.text_wrapper}>
           <section className={styles.home_header}>
-            <h2>Track wildfires in real time, find the best route to the travel and water sources nearby, and submit incident reports to help the community!</h2>
+            <h2>Track wildfires in real time and help the community!</h2>
           </section>
 
           <section className={styles.home_description}>
-            {/* <h2>How It Works</h2> */}
             <p>
-              Technologies: Leaflet, Auth0, XWeather, MongoDB, React, Node.js, Vite, World Cities Database, Ma
+              Technologies: Leaflet, Auth0, XWeather, MongoDB, React, Node.js, Vite, World Cities Database, Mantine, Express
             </p>
           </section>
 
@@ -41,7 +38,7 @@ const Home = () => {
             <button className={styles.cta_button} onClick={() => {
               window.location.href = '/reports';
             }}>
-              Submit Report
+              Submit Incident Report
             </button>
           </section>
 
