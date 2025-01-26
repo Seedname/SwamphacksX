@@ -1,3 +1,7 @@
+
+![firelogo](https://github.com/user-attachments/assets/c2e3a7a2-ff1a-42dc-921f-a89183df9704)
+
+
 Welcome to FireWatch!
 
 FireWatch provides real-time wildfire tracking, allowing for both civilians and authorities to identify areas with potentially dangerous wildfires. 
