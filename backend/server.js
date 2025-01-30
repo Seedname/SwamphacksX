@@ -46,13 +46,13 @@ async function setup() {
         res.sendFile(path.join(__dirname, '../firewatch/dist', 'index.html'));
     });
     
-    http.createServer(app).listen(80);
+    http.createServer(app).listen(8080);
 
     if (!dev) {
-        let privateKey  = fs.readFileSync('/etc/letsencrypt/live/firewatch.wiki/privkey.pem', 'utf8');
-        let certificate = fs.readFileSync('/etc/letsencrypt/live/firewatch.wiki/fullchain.pem', 'utf8');
+        let privateKey  = fs.readFileSync('/etc/letsencrypt/live/websites/privkey.pem', 'utf8');
+        let certificate = fs.readFileSync('/etc/letsencrypt/live/websites/fullchain.pem', 'utf8');
         let credentials = {key: privateKey, cert: certificate};
-        https.createServer(credentials, app).listen(443);
+        https.createServer(credentials, app).listen(8443);
     }
 
 }
