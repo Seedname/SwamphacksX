@@ -9,6 +9,7 @@ import http from "http";
 import https from "https";
 import mongoose from 'mongoose';
 import router from './routes/routes.js';
+import fs from "fs";
 
 const connectDB = async () => {
     await mongoose.connect(process.env.MONGO_URI)
