@@ -53,7 +53,7 @@ async function setup() {
         let privateKey  = fs.readFileSync('/home/julian/certs/privkey.pem', 'utf8');
         let certificate = fs.readFileSync('/home/julian/certs/fullchain.pem', 'utf8');
         let credentials = {key: privateKey, cert: certificate};
-        https.createServer(credentials, app).listen(8443);
+        https.createServer(credentials, app).listen(443);
     }
 
 }
