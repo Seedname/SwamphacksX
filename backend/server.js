@@ -50,8 +50,8 @@ async function setup() {
     http.createServer(app).listen(8080);
 
     if (!dev) {
-        let privateKey  = fs.readFileSync('/etc/letsencrypt/live/websites/privkey.pem', 'utf8');
-        let certificate = fs.readFileSync('/etc/letsencrypt/live/websites/fullchain.pem', 'utf8');
+        let privateKey  = fs.readFileSync('~/certs/privkey.pem', 'utf8');
+        let certificate = fs.readFileSync('~/certs/fullchain.pem', 'utf8');
         let credentials = {key: privateKey, cert: certificate};
         https.createServer(credentials, app).listen(8443);
     }
