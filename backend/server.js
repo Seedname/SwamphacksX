@@ -47,9 +47,9 @@ async function setup() {
         res.sendFile(path.join(__dirname, '../firewatch/dist', 'index.html'));
     });
     
-    http.createServer(app).listen(8080);
-
-    if (!dev) {
+    if (dev) {
+        http.createServer(app).listen(80);
+    } else {
         let privateKey  = fs.readFileSync('/home/julian/certs/privkey.pem', 'utf8');
         let certificate = fs.readFileSync('/home/julian/certs/fullchain.pem', 'utf8');
         let credentials = {key: privateKey, cert: certificate};
