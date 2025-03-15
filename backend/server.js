@@ -49,8 +49,8 @@ async function setup() {
     
     http.createServer(app).listen(80);
     if (!dev) {
-        let privateKey  = fs.readFileSync('~/certs/privkey.pem', 'utf8');
-        let certificate = fs.readFileSync('~/certs/fullchain.pem', 'utf8');
+        let privateKey  = fs.readFileSync('/home/seed/certs/privkey.pem', 'utf8');
+        let certificate = fs.readFileSync('/home/seed/certs/fullchain.pem', 'utf8');
         let credentials = {key: privateKey, cert: certificate};
         https.createServer(credentials, app).listen(443);
     }
